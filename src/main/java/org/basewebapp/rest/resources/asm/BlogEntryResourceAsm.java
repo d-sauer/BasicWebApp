@@ -1,33 +1,32 @@
 package org.basewebapp.rest.resources.asm;
 
-import org.basewebapp.core.entities.BlogEntry;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+
+import org.basewebapp.core.models.entities.BlogEntry;
+import org.basewebapp.rest.mvc.BlogController;
 import org.basewebapp.rest.mvc.BlogEntryController;
 import org.basewebapp.rest.resources.BlogEntryResource;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.*;
+public class BlogEntryResourceAsm extends ResourceAssemblerSupport<BlogEntry, BlogEntryResource> {
 
-public class BlogEntryResourceAsm extends ResourceAssemblerSupport<BlogEntry, BlogEntryResource>{
-
-
-    public BlogEntryResourceAsm() {
+    public BlogEntryResourceAsm()
+    {
         super(BlogEntryController.class, BlogEntryResource.class);
     }
 
     @Override
     public BlogEntryResource toResource(BlogEntry blogEntry) {
-        BlogEntryResource resource = new BlogEntryResource();
-        resource.setTitle(blogEntry.getTitle());
-        
-        // Creatin link for hateos
-//        Link link = linkTo(methodOn(BlogEntryController.class).getBlogEntry(blogEntry.getId())).withSelfRel();
-        // OR
-        Link link = linkTo(BlogEntryController.class).slash(blogEntry.getId()).withSelfRel();
-        
-        resource.add(link.withSelfRel());
-        
-        return resource;
+        BlogEntryResource res = new BlogEntryResource();
+        res.setTitle(blogEntry.getTitle());
+        Link self = linkTo(BlogEntryController.class).slash(blogEntry.getId()).withSelfRel();
+        res.add(self);
+        if (blogEntry.getBlog() != null)
+        {
+            res.add((linkTo(BlogController.class).slash(blogEntry.getBlog().getId()).withRel("blog")));
+        }
+        return res;
     }
 
 }

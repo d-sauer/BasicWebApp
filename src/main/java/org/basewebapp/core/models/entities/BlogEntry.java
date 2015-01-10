@@ -1,9 +1,11 @@
-package org.basewebapp.core.entities;
+package org.basewebapp.core.models.entities;
 
 public class BlogEntry {
 
     private Long id;
-    
+    private String title;
+    private Blog blog;
+
     public Long getId() {
         return id;
     }
@@ -12,8 +14,6 @@ public class BlogEntry {
         this.id = id;
     }
 
-    private String title;
-
     public String getTitle() {
         return title;
     }
@@ -21,5 +21,13 @@ public class BlogEntry {
     public void setTitle(String title) {
         this.title = title;
     }
-    
+
+    public Blog getBlog() {
+        return blog;
+    }
+
+    public void setBlog(Blog blog) {
+        this.blog = blog;
+    }
+
 }
