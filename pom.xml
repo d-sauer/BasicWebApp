@@ -63,7 +63,32 @@
 		    <artifactId>jackson-databind</artifactId>
 		    <version>${jackson.version}</version>
 		</dependency>
-	        
+		
+		<!-- database -->
+        <dependency>
+		    <groupId>com.h2database</groupId>
+		    <artifactId>h2</artifactId>
+		    <version>1.4.184</version>
+		</dependency>
+				    
+	    <dependency>
+		    <groupId>org.hibernate</groupId>
+		    <artifactId>hibernate-entitymanager</artifactId>
+		    <version>4.3.7.Final</version>
+		</dependency>
+			       
+	    <dependency>   <!--  enable using JDBC pool -->
+		    <groupId>org.apache.commons</groupId>
+		    <artifactId>commons-dbcp2</artifactId>
+		    <version>2.0.1</version>
+		</dependency>
+
+	    <dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-orm</artifactId>
+		</dependency>
+			    
+	    
         <!-- Testing -->
 		<dependency>
 			<groupId>junit</groupId>

@@ -1,11 +1,10 @@
 package org.basewebapp.mvc;
 
-import static org.hamcrest.Matchers.endsWith;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -23,6 +22,7 @@ import org.basewebapp.core.services.exceptions.BlogExistsException;
 import org.basewebapp.rest.mvc.AccountController;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -42,11 +42,15 @@ public class AccountControllerTest {
 
     private MockMvc mockMvc;
 
+    private ArgumentCaptor<Account> accountCaptor;
+    
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
 
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+        
+        accountCaptor = ArgumentCaptor.forClass(Account.class);
     }
 
     @Test
@@ -102,6 +106,17 @@ public class AccountControllerTest {
                 .andExpect(header().string("Location", org.hamcrest.Matchers.endsWith("/rest/accounts/1")))
                 .andExpect(jsonPath("$.name", is(createdAccount.getName())))
                 .andExpect(status().isCreated());
+        
+        // verify that method callAccount was called on service call
+        verify(service).createAccount(any(Account.class));
+
+        // 
+        // verify that method callAccount was called on service call
+        // and map used object from service
+        verify(service).createAccount(accountCaptor.capture());
+        String password = accountCaptor.getValue().getPassword();
+        assertEquals("test", password); // pass because we add @JsonProperty on AccountResource.setPassword. 
+                                        // We did that, because we add @JsonIgnore to getPassword
     }
 
     @Test
@@ -130,7 +145,8 @@ public class AccountControllerTest {
 
         mockMvc.perform(get("/rest/accounts/1"))
                 .andDo(print())
-                .andExpect(jsonPath("$.password", is(nullValue())))
+//                .andExpect(jsonPath("$.password", is(nullValue())))  // not working correct
+                .andExpect(jsonPath("$.password").doesNotExist())
                 .andExpect(jsonPath("$.name", is(foundAccount.getName())))
                 .andExpect(status().isOk());
     }

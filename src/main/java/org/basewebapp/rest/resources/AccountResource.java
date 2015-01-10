@@ -3,6 +3,9 @@ package org.basewebapp.rest.resources;
 import org.basewebapp.core.models.entities.Account;
 import org.springframework.hateoas.ResourceSupport;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class AccountResource extends ResourceSupport {
     private String name;
 
@@ -16,10 +19,12 @@ public class AccountResource extends ResourceSupport {
         this.name = name;
     }
 
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
 
+    @JsonProperty
     public void setPassword(String password) {
         this.password = password;
     }

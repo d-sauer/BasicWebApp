@@ -7,6 +7,7 @@ import org.basewebapp.core.models.entities.Blog;
 import org.basewebapp.core.services.AccountService;
 import org.basewebapp.core.services.exceptions.AccountDoesNotExistException;
 import org.basewebapp.core.services.exceptions.AccountExistsException;
+import org.basewebapp.core.services.exceptions.BlogExistsException;
 import org.basewebapp.rest.exceptions.BadRequestException;
 import org.basewebapp.rest.exceptions.ConflictException;
 import org.basewebapp.rest.resources.AccountResource;
@@ -43,7 +44,7 @@ public class AccountController {
             return new ResponseEntity<AccountResource>(res, headers, HttpStatus.CREATED);
         } catch(AccountExistsException exception) {
             throw new ConflictException(exception);
-        }
+        } 
     }
 
     @RequestMapping( value="/{accountId}",
@@ -76,6 +77,9 @@ public class AccountController {
         } catch(AccountDoesNotExistException exception)
         {
             throw new BadRequestException(exception);
+        } catch(BlogExistsException exception)
+        {
+            throw new ConflictException(exception);
         }
     }
 
