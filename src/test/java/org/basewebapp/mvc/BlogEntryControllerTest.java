@@ -1,23 +1,34 @@
 package org.basewebapp.mvc;
 
+import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import org.basewebapp.core.entities.BlogEntry;
+import org.basewebapp.core.services.BlogEntryService;
+import org.basewebapp.rest.mvc.BlogEntryController;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
-
-import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 
 public class BlogEntryControllerTest {
 
     @InjectMocks
     private BlogEntryController controller;
+    
+    @Mock
+    private BlogEntryService service;
     
     private MockMvc mockMvc;
     
@@ -35,34 +46,33 @@ public class BlogEntryControllerTest {
                                  .build();
     }       
     
+    
     @Test
-    public void test() throws Exception {
-        mockMvc.perform(get("/test")).andDo(print());
+    public void getExistingBlogEntry() throws Exception {
+        // define simulated blog entry that service will find it
+        BlogEntry blogEntry = new BlogEntry();
+        blogEntry.setId(1L);
+        blogEntry.setTitle("Test title");
+        
+        // simulate service method
+        when(service.find(1L)).thenReturn(blogEntry);
+        
+        // send request
+        ResultActions result = mockMvc.perform(get("/rest/blog-entries/1"));
+        result.andDo(print())
+               .andExpect(jsonPath("$.title", is(blogEntry.getTitle())))
+               .andExpect(jsonPath("$.links[*].href", hasItem(endsWith("/blog-entries/1"))))
+               .andExpect(status().isOk());
     }
 
     @Test
-    public void test2() throws Exception {
-        mockMvc.perform(get("/test2")).andDo(print());
+    public void getNotExistingBlogEntry() throws Exception {
+        // simulate service method
+        when(service.find(1L)).thenReturn(null);
+        
+        // send request
+        ResultActions result = mockMvc.perform(get("/rest/blog-entries/1"));
+        result.andExpect(status().isNotFound());
     }
-
-    @Test
-    public void test2B() throws Exception {
-        mockMvc.perform(get("/test2B")).andDo(print());
-    }
-
-    @Test
-    public void test3() throws Exception {
-        mockMvc.perform(post("/test3")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"title\" : \"Blog title 3\"}")).andDo(print());
-    }
-
-    @Test
-    public void test3B() throws Exception {
-        mockMvc.perform(post("/test3")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"title\" : \"Blog title 3\"}"))
-                .andExpect(jsonPath("$.title", is("Blog title 3")))
-                .andDo(print());
-    }
+    
 }

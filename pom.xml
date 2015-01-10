@@ -39,6 +39,12 @@
 			<artifactId>spring-webmvc</artifactId>
 		</dependency>
 
+	    <dependency>
+	        <groupId>org.springframework.hateoas</groupId>
+	        <artifactId>spring-hateoas</artifactId>
+	        <version>0.16.0.RELEASE</version>
+	    </dependency>
+	    
         <!-- jackson -->
         <dependency>
 	        <groupId>com.fasterxml.jackson.core</groupId>

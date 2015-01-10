@@ -1,6 +1,6 @@
-package org.basewebapp.mvc;
+package org.basewebapp.rest.mvc;
 
-import org.basewebapp.entities.BlogEntry;
+import org.basewebapp.core.entities.BlogEntry;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-public class BlogEntryController {
+public class OldBlogEntryController {
 
     @RequestMapping("/test")
     public String test() {
