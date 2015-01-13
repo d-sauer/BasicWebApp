@@ -2,13 +2,15 @@ package org.basewebapp.core.repositories.jpa;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 
 import org.basewebapp.core.models.entities.Account;
 import org.basewebapp.core.models.entities.Blog;
 import org.basewebapp.core.repositories.AccountRepo;
 import org.springframework.stereotype.Repository;
 
-@Repository 
+@Repository
+@Transactional
 public class JpaAccountRepo implements AccountRepo {
 
     @PersistenceContext
