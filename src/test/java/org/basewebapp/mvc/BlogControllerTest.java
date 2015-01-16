@@ -67,8 +67,8 @@ public class BlogControllerTest {
         blogB.setTitle("Title B");
         list.add(blogB);
 
-        BlogList allBlogs = new BlogList();
-        allBlogs.setBlogs(list);
+        BlogList allBlogs = new BlogList(list);
+
 
         when(blogService.findAllBlogs()).thenReturn(allBlogs);
 
@@ -94,7 +94,7 @@ public class BlogControllerTest {
                 .andExpect(jsonPath("$.links[*].href",
                         hasItem(endsWith("/blogs/1"))))
                 .andExpect(jsonPath("$.links[*].href",
-                        hasItem(endsWith("/blogs/1/entries"))))
+                        hasItem(endsWith("/blogs/1/blog-entries"))))
                 .andExpect(jsonPath("$.links[*].href",
                         hasItem(endsWith("/accounts/1"))))
                 .andExpect(jsonPath("$.links[*].rel",
@@ -135,6 +135,14 @@ public class BlogControllerTest {
     }
 
     @Test
+    public void getNonExistingBlog() throws Exception {
+        when(blogService.findBlog(1L)).thenReturn(null);
+
+        mockMvc.perform(get("/rest/blogs/1"))
+                .andExpect(status().isNotFound());
+    }
+    
+    @Test
     public void listBlogEntriesForExistingBlog() throws Exception {
 
         BlogEntry entryA = new BlogEntry();
@@ -149,9 +157,9 @@ public class BlogControllerTest {
         blogListings.add(entryA);
         blogListings.add(entryB);
 
-        BlogEntryList list = new BlogEntryList();
-        list.setEntries(blogListings);
-        list.setBlogId(1L);
+        BlogEntryList list = new BlogEntryList(1L, blogListings);
+
+
 
         when(blogService.findAllBlogEntries(1L)).thenReturn(list);
 
